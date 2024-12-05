@@ -1,5 +1,5 @@
 const TABLA = 'post';
-const auth = require('../auth');
+const auth = require('../../../api/components/auth');
 
 module.exports = function(injectedStore){
     let store = injectedStore;
