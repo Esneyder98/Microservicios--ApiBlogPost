@@ -16,7 +16,11 @@ const check = {
       
     }
     console.log(decoded);
+  },
+  logged: function(req){
+    const decoded = decodeHeader(req);
   }
+
 }
 function verify(token) {
   try {

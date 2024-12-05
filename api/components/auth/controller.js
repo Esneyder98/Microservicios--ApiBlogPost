@@ -1,15 +1,15 @@
 const bcrypt = require('bcrypt');
 const auth = require('../../../auth')
 const TABLA = 'auth';
-async function generateUserId() {
-    const { nanoid } = await import('nanoid');  // Importación dinámica
-    const id = await nanoid();
-    return id;
-  }
+// async function generateUserId() {
+//     const { nanoid } = await import('nanoid');  // Importación dinámica
+//     const id = await nanoid();
+//     return id;
+//   }
 module.exports = function(injectedStore){
     let store = injectedStore;
     if(!store){
-        store = require('../../../store/dummy');
+        store = require('../../../store/mysql');
     }
     async function login(username,password){
         const data = await store.query(TABLA,{username: username});
@@ -23,10 +23,9 @@ module.exports = function(injectedStore){
         }
     }
     async function upsert(data) {
-        const authData = {
-            id: data.id,
-        };
 
+        let authData = {};
+        
         if(data.username){
             authData.username = data.username;
         }
@@ -34,7 +33,11 @@ module.exports = function(injectedStore){
         if(data.password){
             authData.password = await bcrypt.hash(data.password, 5);
         }
-        return store.upsert(TABLA, authData);
+        if(data.userId){
+            authData.userId = data.userId;
+            
+        }
+        return await store.upsert(TABLA, authData);
     }
     return {
         upsert,
